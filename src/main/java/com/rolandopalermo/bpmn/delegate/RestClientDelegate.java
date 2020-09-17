@@ -1,6 +1,5 @@
 package com.rolandopalermo.bpmn.delegate;
 
-import com.rolandopalermo.bpmn.exception.UnsupportedHTTPMethodException;
 import lombok.Data;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -24,30 +23,18 @@ public class RestClientDelegate implements JavaDelegate {
     private final RestTemplate restTemplate;
 
     public void execute(DelegateExecution execution) {
+        Response response;
+
         String uri = execution.getVariable("httpUri").toString();
         String httpMethodValue = execution.getVariable("httpMethod").toString().toUpperCase();
         String payload = execution.getVariable("payload").toString();
 
         HttpMethod httpMethod = HttpMethod.valueOf(httpMethodValue);
-        Response response;
-        switch (httpMethod) {
-            case GET:
-                response = exchange(uri, HttpMethod.GET, null);
-                break;
-            case POST:
-                HttpHeaders headers = new HttpHeaders();
-                headers.setContentType(MediaType.APPLICATION_JSON);
-                response = exchange(uri, HttpMethod.POST, new HttpEntity<>(payload, headers));
-                break;
-            case PUT:
-                response = exchange(uri, HttpMethod.PUT, null);
-                break;
-            case DELETE:
-                response = exchange(uri, HttpMethod.DELETE, null);
-                break;
-            default:
-                throw new UnsupportedHTTPMethodException();
-        }
+
+        HttpHeaders headers = new HttpHeaders();
+        headers.setContentType(MediaType.APPLICATION_JSON);
+        response = exchange(uri, httpMethod, new HttpEntity<>(payload, headers));
+
         execution.setVariable("httpStatusCode", response.getHttpStatusCode());
         execution.setVariable("httpResponse", response.getHttpResponse());
     }

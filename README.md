@@ -33,3 +33,7 @@ For this sample, we are going to make a call to the [rest service](https://restc
 https://restcountries.eu/rest/v2/currency/{currency}
 ```
 And we will return the name of the country.
+
+```
+http://localhost:8080/api/spin-sample/{currency}
+```
