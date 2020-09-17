@@ -1,0 +1,38 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<bpmn:definitions xmlns:bpmn="http://www.omg.org/spec/BPMN/20100524/MODEL" xmlns:bpmndi="http://www.omg.org/spec/BPMN/20100524/DI" xmlns:dc="http://www.omg.org/spec/DD/20100524/DC" xmlns:camunda="http://camunda.org/schema/1.0/bpmn" xmlns:di="http://www.omg.org/spec/DD/20100524/DI" id="Definitions_1vcuqsi" targetNamespace="http://bpmn.io/schema/bpmn" exporter="Camunda Modeler" exporterVersion="4.1.1">
+  <bpmn:process id="delegate-sample-process" isExecutable="true">
+    <bpmn:startEvent id="StartEvent_1">
+      <bpmn:outgoing>Flow_1gw1ucn</bpmn:outgoing>
+    </bpmn:startEvent>
+    <bpmn:endEvent id="Event_096l34i">
+      <bpmn:incoming>Flow_0vay1i9</bpmn:incoming>
+    </bpmn:endEvent>
+    <bpmn:sequenceFlow id="Flow_1gw1ucn" sourceRef="StartEvent_1" targetRef="ServiceTask_Call_Delegate_Sample" />
+    <bpmn:sequenceFlow id="Flow_0vay1i9" sourceRef="ServiceTask_Call_Delegate_Sample" targetRef="Event_096l34i" />
+    <bpmn:serviceTask id="ServiceTask_Call_Delegate_Sample" name="Call java delegate" camunda:delegateExpression="#{delegateSample}">
+      <bpmn:incoming>Flow_1gw1ucn</bpmn:incoming>
+      <bpmn:outgoing>Flow_0vay1i9</bpmn:outgoing>
+    </bpmn:serviceTask>
+  </bpmn:process>
+  <bpmndi:BPMNDiagram id="BPMNDiagram_1">
+    <bpmndi:BPMNPlane id="BPMNPlane_1" bpmnElement="delegate-sample-process">
+      <bpmndi:BPMNEdge id="Flow_1gw1ucn_di" bpmnElement="Flow_1gw1ucn">
+        <di:waypoint x="215" y="117" />
+        <di:waypoint x="280" y="117" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_0vay1i9_di" bpmnElement="Flow_0vay1i9">
+        <di:waypoint x="380" y="117" />
+        <di:waypoint x="442" y="117" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNShape id="_BPMNShape_StartEvent_2" bpmnElement="StartEvent_1">
+        <dc:Bounds x="179" y="99" width="36" height="36" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Event_096l34i_di" bpmnElement="Event_096l34i">
+        <dc:Bounds x="442" y="99" width="36" height="36" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Activity_11tsqw8_di" bpmnElement="ServiceTask_Call_Delegate_Sample">
+        <dc:Bounds x="280" y="77" width="100" height="80" />
+      </bpmndi:BPMNShape>
+    </bpmndi:BPMNPlane>
+  </bpmndi:BPMNDiagram>
+</bpmn:definitions>
