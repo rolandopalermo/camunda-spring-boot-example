@@ -28,7 +28,7 @@ http://localhost:8080/api/delegate-sample/{name}
 Camunda Spin is a library for simple XML and JSON processing on the JVM (Java Virtual Machine), targeting Java and JVM-based scripting languages such as Groovy, JRuby, Jython, JavaScript and Java Expression Language.
 [https://docs.camunda.org/manual/7.8/reference/spin/](https://docs.camunda.org/manual/7.8/reference/spin/)
 
-For this sample, we are going to make a call to the rest service:
+For this sample, we are going to make a call to the [rest service](https://restcountries.eu/):
 ```
 https://restcountries.eu/rest/v2/currency/{currency}
 ```
