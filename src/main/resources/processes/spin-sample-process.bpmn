@@ -1,14 +1,19 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<bpmn:definitions xmlns:bpmn="http://www.omg.org/spec/BPMN/20100524/MODEL" xmlns:bpmndi="http://www.omg.org/spec/BPMN/20100524/DI" xmlns:dc="http://www.omg.org/spec/DD/20100524/DC" xmlns:camunda="http://camunda.org/schema/1.0/bpmn" xmlns:di="http://www.omg.org/spec/DD/20100524/DI" id="Definitions_04kp60l" targetNamespace="http://bpmn.io/schema/bpmn" exporter="Camunda Modeler" exporterVersion="4.1.1">
+<bpmn:definitions xmlns:bpmn="http://www.omg.org/spec/BPMN/20100524/MODEL" xmlns:bpmndi="http://www.omg.org/spec/BPMN/20100524/DI" xmlns:dc="http://www.omg.org/spec/DD/20100524/DC" xmlns:camunda="http://camunda.org/schema/1.0/bpmn" xmlns:di="http://www.omg.org/spec/DD/20100524/DI" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" id="Definitions_04kp60l" targetNamespace="http://bpmn.io/schema/bpmn" exporter="Camunda Modeler" exporterVersion="4.1.1">
   <bpmn:process id="spin-sample-process" isExecutable="true">
     <bpmn:startEvent id="StartEvent_1">
       <bpmn:outgoing>Flow_0ypjja7</bpmn:outgoing>
     </bpmn:startEvent>
-    <bpmn:endEvent id="Event_00dv2i6">
-      <bpmn:incoming>Flow_0hshtb6</bpmn:incoming>
+    <bpmn:endEvent id="Event_00dv2i6" name="End">
+      <bpmn:extensionElements>
+        <camunda:inputOutput>
+          <camunda:inputParameter name="output">${httpResponse}</camunda:inputParameter>
+        </camunda:inputOutput>
+      </bpmn:extensionElements>
+      <bpmn:incoming>Flow_0jc5shp</bpmn:incoming>
     </bpmn:endEvent>
     <bpmn:sequenceFlow id="Flow_0ypjja7" sourceRef="StartEvent_1" targetRef="CallActivity_Get_Currency" />
-    <bpmn:sequenceFlow id="Flow_0hshtb6" sourceRef="CallActivity_Get_Currency" targetRef="Event_00dv2i6" />
+    <bpmn:sequenceFlow id="Flow_0hshtb6" sourceRef="CallActivity_Get_Currency" targetRef="Gateway_1s8mnjt" />
     <bpmn:callActivity id="CallActivity_Get_Currency" name="Get currency" calledElement="rest-connector-process">
       <bpmn:extensionElements>
         <camunda:in sourceExpression="${&#34;https://restcountries.eu/rest/v2/currency/&#34;}${input}" target="httpUri" />
@@ -16,13 +21,32 @@
         <camunda:in sourceExpression="${&#34;&#34;}" target="payload" />
         <camunda:out source="httpResponse" target="httpResponse" />
         <camunda:out source="httpStatusCode" target="httpStatusCode" />
-        <camunda:inputOutput>
-          <camunda:outputParameter name="output">${httpResponse}</camunda:outputParameter>
-        </camunda:inputOutput>
       </bpmn:extensionElements>
       <bpmn:incoming>Flow_0ypjja7</bpmn:incoming>
       <bpmn:outgoing>Flow_0hshtb6</bpmn:outgoing>
     </bpmn:callActivity>
+    <bpmn:exclusiveGateway id="Gateway_1s8mnjt" default="Flow_0gff4yx">
+      <bpmn:incoming>Flow_0hshtb6</bpmn:incoming>
+      <bpmn:outgoing>Flow_0zqmv2l</bpmn:outgoing>
+      <bpmn:outgoing>Flow_0gff4yx</bpmn:outgoing>
+    </bpmn:exclusiveGateway>
+    <bpmn:sequenceFlow id="Flow_0zqmv2l" sourceRef="Gateway_1s8mnjt" targetRef="ServiceTask_Read_Country_Name">
+      <bpmn:conditionExpression xsi:type="bpmn:tFormalExpression">${httpStatusCode == 200}</bpmn:conditionExpression>
+    </bpmn:sequenceFlow>
+    <bpmn:sequenceFlow id="Flow_0gff4yx" sourceRef="Gateway_1s8mnjt" targetRef="Event_038tcdx" />
+    <bpmn:endEvent id="Event_038tcdx" name="End with errors">
+      <bpmn:incoming>Flow_0gff4yx</bpmn:incoming>
+    </bpmn:endEvent>
+    <bpmn:sequenceFlow id="Flow_0jc5shp" sourceRef="ServiceTask_Read_Country_Name" targetRef="Event_00dv2i6" />
+    <bpmn:serviceTask id="ServiceTask_Read_Country_Name" name="Read country name using SPIN" camunda:expression="${&#34;true&#34;}">
+      <bpmn:extensionElements>
+        <camunda:inputOutput>
+          <camunda:outputParameter name="output">${JSON(httpResponse).jsonPath("$[0].name").stringValue()}</camunda:outputParameter>
+        </camunda:inputOutput>
+      </bpmn:extensionElements>
+      <bpmn:incoming>Flow_0zqmv2l</bpmn:incoming>
+      <bpmn:outgoing>Flow_0jc5shp</bpmn:outgoing>
+    </bpmn:serviceTask>
     <bpmn:textAnnotation id="TextAnnotation_067883h">
       <bpmn:text>Input
 -------
@@ -36,36 +60,63 @@
   </bpmn:process>
   <bpmndi:BPMNDiagram id="BPMNDiagram_1">
     <bpmndi:BPMNPlane id="BPMNPlane_1" bpmnElement="spin-sample-process">
-      <bpmndi:BPMNShape id="TextAnnotation_067883h_di" bpmnElement="TextAnnotation_067883h">
-        <dc:Bounds x="147" y="80" width="83" height="53" />
-      </bpmndi:BPMNShape>
       <bpmndi:BPMNShape id="TextAnnotation_17n73bf_di" bpmnElement="TextAnnotation_17n73bf">
-        <dc:Bounds x="205" y="270" width="310" height="30" />
+        <dc:Bounds x="205" y="70" width="310" height="30" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="TextAnnotation_067883h_di" bpmnElement="TextAnnotation_067883h">
+        <dc:Bounds x="147" y="230" width="83" height="53" />
       </bpmndi:BPMNShape>
       <bpmndi:BPMNEdge id="Flow_0hshtb6_di" bpmnElement="Flow_0hshtb6">
         <di:waypoint x="410" y="187" />
-        <di:waypoint x="512" y="187" />
+        <di:waypoint x="475" y="187" />
       </bpmndi:BPMNEdge>
       <bpmndi:BPMNEdge id="Flow_0ypjja7_di" bpmnElement="Flow_0ypjja7">
         <di:waypoint x="215" y="187" />
         <di:waypoint x="310" y="187" />
       </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_0zqmv2l_di" bpmnElement="Flow_0zqmv2l">
+        <di:waypoint x="525" y="187" />
+        <di:waypoint x="580" y="187" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_0gff4yx_di" bpmnElement="Flow_0gff4yx">
+        <di:waypoint x="500" y="212" />
+        <di:waypoint x="500" y="262" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_0jc5shp_di" bpmnElement="Flow_0jc5shp">
+        <di:waypoint x="680" y="187" />
+        <di:waypoint x="732" y="187" />
+      </bpmndi:BPMNEdge>
       <bpmndi:BPMNShape id="_BPMNShape_StartEvent_2" bpmnElement="StartEvent_1">
         <dc:Bounds x="179" y="169" width="36" height="36" />
-      </bpmndi:BPMNShape>
-      <bpmndi:BPMNShape id="Event_00dv2i6_di" bpmnElement="Event_00dv2i6">
-        <dc:Bounds x="512" y="169" width="36" height="36" />
       </bpmndi:BPMNShape>
       <bpmndi:BPMNShape id="Activity_10hl3it_di" bpmnElement="CallActivity_Get_Currency">
         <dc:Bounds x="310" y="147" width="100" height="80" />
       </bpmndi:BPMNShape>
-      <bpmndi:BPMNEdge id="Association_1hhtukq_di" bpmnElement="Association_1hhtukq">
-        <di:waypoint x="197" y="169" />
-        <di:waypoint x="197" y="133" />
-      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNShape id="Gateway_1s8mnjt_di" bpmnElement="Gateway_1s8mnjt" isMarkerVisible="true">
+        <dc:Bounds x="475" y="162" width="50" height="50" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Activity_0l4psoq_di" bpmnElement="ServiceTask_Read_Country_Name">
+        <dc:Bounds x="580" y="147" width="100" height="80" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Event_1ald07y_di" bpmnElement="Event_038tcdx">
+        <dc:Bounds x="482" y="262" width="36" height="36" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="463" y="305" width="75" height="14" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Event_00dv2i6_di" bpmnElement="Event_00dv2i6">
+        <dc:Bounds x="732" y="169" width="36" height="36" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="740" y="212" width="20" height="14" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNShape>
       <bpmndi:BPMNEdge id="Association_082q87d_di" bpmnElement="Association_082q87d">
-        <di:waypoint x="360" y="227" />
-        <di:waypoint x="360" y="270" />
+        <di:waypoint x="360" y="147" />
+        <di:waypoint x="360" y="100" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Association_1hhtukq_di" bpmnElement="Association_1hhtukq">
+        <di:waypoint x="197" y="205" />
+        <di:waypoint x="197" y="230" />
       </bpmndi:BPMNEdge>
     </bpmndi:BPMNPlane>
   </bpmndi:BPMNDiagram>
