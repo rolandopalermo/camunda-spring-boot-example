@@ -23,3 +23,13 @@ Delegation Code allows you to execute external Java code, scripts or evaluate ex
 ```
 http://localhost:8080/api/delegate-sample/{name}
 ```
+
+### Camunda Spin Sample
+Camunda Spin is a library for simple XML and JSON processing on the JVM (Java Virtual Machine), targeting Java and JVM-based scripting languages such as Groovy, JRuby, Jython, JavaScript and Java Expression Language.
+[https://docs.camunda.org/manual/7.8/reference/spin/](https://docs.camunda.org/manual/7.8/reference/spin/)
+
+For this sample, we are going to make a call to the rest service:
+```
+https://restcountries.eu/rest/v2/currency/{currency}
+```
+And we will return the name of the country.
